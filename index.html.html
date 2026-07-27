@@ -673,21 +673,31 @@ async function submitLead(){
     });
   }
 
-  // Show success briefly then redirect
+  // Build WhatsApp URL with lead data
+  const nome    = payload.nome;
+  const whats   = payload.whatsapp;
+  const insta   = payload.instagram;
+  const cidade  = payload.cidade;
+  const msg = encodeURIComponent(`Olá André! Me chamo ${nome} e tenho interesse no Programa 300! 🚀\n\n📱 WhatsApp: ${whats}\n📸 Instagram: ${insta}\n🏙️ Cidade do CNPJ: ${cidade}\n\nQuero saber se ainda há vaga disponível para a minha cidade!`);
+  const waUrl = `https://api.whatsapp.com/send/?phone=5511964337774&text=${msg}&type=phone_number&app_absent=0`;
+
+  // Open WhatsApp immediately (must be synchronous after user gesture to avoid popup block)
+  window.open(waUrl, "_blank");
+
+  // Show success screen
   document.getElementById("modalLoading").style.display="none";
   document.getElementById("modalSuccess").style.display="flex";
 
+  // Reset modal after a moment
   setTimeout(()=>{
     closeModal();
-    window.open(WA_URL,"_blank");
-    // Reset form for next time
     setTimeout(()=>{
       document.getElementById("modalForm").style.display="block";
       document.getElementById("modalSuccess").style.display="none";
       ["fNome","fWhats","fInsta","fCidade"].forEach(id=>document.getElementById(id).value="");
       btn.disabled=false;
-    }, 600);
-  }, 1800);
+    }, 400);
+  }, 2000);
 }
 
 // Phone mask
